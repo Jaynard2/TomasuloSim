@@ -1,0 +1,8 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "libraries/appframework-1.0.3.jar",
+        "libraries/beansbinding-1.2.1.jar",
+        "libraries/swing-worker-1.1.jar"
+    ]
+}
