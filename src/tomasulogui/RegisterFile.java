@@ -10,6 +10,8 @@ public class RegisterFile {
     for (int i=0; i < 32; i++ ) {
       robSlot[i] = -1;
     }
+    // Set R0 to default to 0
+    regs[0] = 0;
   }
 
   public int getReg(int regNum) {
