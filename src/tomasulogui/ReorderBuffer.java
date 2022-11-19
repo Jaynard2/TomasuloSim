@@ -1,5 +1,7 @@
 package tomasulogui;
 
+import tomasulogui.IssuedInst.INST_TYPE;
+
 public class ReorderBuffer {
   public static final int size = 30;
   int frontQ = 0;
@@ -54,8 +56,14 @@ public class ReorderBuffer {
 
     boolean shouldAdvance = true;
 
-    // TODO - this is where you look at the type of instruction and
-    // figure out how to retire it properly
+    if(retiree.getOpcode() != INST_TYPE.STORE)
+    {
+      if(getTagForReg(retiree.getWriteReg()) == retiree.tag)
+      {
+        regs.setReg(retiree.getWriteReg(), retiree.getWriteValue());
+        setTagForReg(retiree.getWriteReg(), -1);
+      }
+    }
 
       // if mispredict branch, won't do normal advance
       if (shouldAdvance) {

@@ -11,6 +11,7 @@ public class ROBEntry {
   int instPC = -1;
   int writeReg = -1;
   int writeValue = -1;
+  int tag = -1;
 
   IssuedInst.INST_TYPE opcode;
 
@@ -69,6 +70,7 @@ public class ROBEntry {
     // 2. update the fields of the ROBEntry, as shown in the 1st line of code above
     instPC = inst.pc;
     writeReg = inst.regDest;
+    tag = inst.regDestTag;
 
   }
 
