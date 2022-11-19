@@ -37,11 +37,9 @@ public abstract class FunctionalUnit {
     if(curStation != -1 && currCycleCount < getExecCycles())
     {
       currCycleCount++;
+      if(currCycleCount == getExecCycles())
+        needsCDB = true;
     } 
-    else if(currCycleCount == getExecCycles())
-    {
-      needsCDB = true;
-    }
   }
 
   public int getCurrentStation()
@@ -58,7 +56,7 @@ public abstract class FunctionalUnit {
       curStation = (curStation + 1) % 2;
     else
       curStation = -1;
-
+    System.out.println("Removing " + station);
     stations[oldCurStation] = null;
   }
 

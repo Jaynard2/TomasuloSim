@@ -31,6 +31,7 @@ public class IssueUnit {
       int code = inst.getOpcode();
       issuee = IssuedInst.createIssuedInst(inst);
       Object fu = null;
+
       switch(code)
       {
       case Instruction.INST_MUL:
@@ -82,24 +83,16 @@ public class IssueUnit {
     {
       if (issue.regSrc1Used)
       {
+        issue.regSrc1Tag = -1;
         if (simulator.regs.getSlotForReg(issue.regSrc1) != -1)
           issue.regSrc1Tag = simulator.getROB().getTagForReg(issue.regSrc1);
-        else
-        {
-          issue.regSrc1Tag = -1;
-          issue.regSrc1Value = simulator.getROB().getDataForReg(issue.regSrc1);
-        }
       }
 
       if (issue.regSrc2Used)
       {
+        issue.regSrc2Tag = -1;
         if (simulator.regs.getSlotForReg(issue.regSrc2) != -1)
           issue.regSrc2Tag = simulator.getROB().getTagForReg(issue.regSrc2);
-        else
-        {
-          issue.regSrc2Tag = -1;
-          issue.regSrc2Value = simulator.getROB().getDataForReg(issue.regSrc2);
-        }
       }
     }
 

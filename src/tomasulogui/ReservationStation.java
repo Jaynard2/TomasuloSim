@@ -19,6 +19,10 @@ public class ReservationStation {
   int address;
   boolean predictedTaken = false;
 
+  int oldCDBTag;
+  int oldCDBValue;
+  boolean cbdWasValid = false;
+
   public ReservationStation(PipelineSimulator sim) {
     simulator = sim;
   }
@@ -53,7 +57,7 @@ public class ReservationStation {
       data1 = cdb.getDataValue();
       data1Valid = true;
     }
-    else if(tag == tag2)
+    if(tag == tag2)
     {
       data2 = cdb.getDataValue();
       data2Valid = true;
@@ -76,16 +80,20 @@ public class ReservationStation {
     int reg1 = inst.getRegSrc1();
     int reg2 = inst.getRegSrc2();
     RegisterFile regs = simulator.regs;
-    if(inst.regSrc1Used && regs.getSlotForReg(reg1) == -1)
+    if(inst.regSrc1Used && tag1 == -1)
     {
       data1 = regs.getReg(reg1);
+      if(cbdWasValid && oldCDBTag == tag1)
+        data1 = oldCDBValue;
       data1Valid = true;
     }
     if(inst.regSrc2Used)
     {
-      if(regs.getSlotForReg(reg2) == -1)
+      if(tag2 == -1)
       {
         data2 = regs.getReg(reg2);
+        if(cbdWasValid && oldCDBTag == tag2)
+          data2 = oldCDBValue;
         data2Valid = true;
       }
     }
@@ -96,5 +104,9 @@ public class ReservationStation {
     }
 
     function = inst.getOpcode();
+
+    cbdWasValid = simulator.cdb.dataValid;
+    oldCDBTag = simulator.cdb.dataTag;
+    oldCDBValue = simulator.cdb.dataValue;
   }
 }
