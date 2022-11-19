@@ -389,6 +389,33 @@ public class PipelineSimulator {
       cdb.setDataValid(false);
 
       // hint: start with divider, and give it first chance of getting CDB
+      if(divider.needsCDB)
+      {
+        int station = divider.getCurrentStation();
+        int result = divider.calculateResult(station);
+        int tag = divider.getTag(station);
+        cdb.setDataTag(tag);
+        cdb.setDataValue(result);
+        cdb.setDataValid(true);
+      }
+      else if(multiplier.needsCDB)
+      {
+        int station = multiplier.getCurrentStation();
+        int result = multiplier.calculateResult(station);
+        int tag = multiplier.getTag(station);
+        cdb.setDataTag(tag);
+        cdb.setDataValue(result);
+        cdb.setDataValid(true);
+      }
+      else if(alu.needsCDB)
+      {
+        int station = alu.getCurrentStation();
+        int result = alu.calculateResult(station);
+        int tag = alu.getTag(station);
+        cdb.setDataTag(tag);
+        cdb.setDataValue(result);
+        cdb.setDataValid(true);
+      }
 
     }
 

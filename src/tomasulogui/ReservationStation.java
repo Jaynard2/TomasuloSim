@@ -44,7 +44,21 @@ public class ReservationStation {
   }
 
   public void snoop(CDB cdb) {
-    // TODO - add code to snoop on CDB each cycle
+    if(!cdb.dataValid)
+      return;
+
+    int tag = cdb.getDataTag();
+    if(tag == tag1)
+    {
+      data1 = cdb.getDataValue();
+      data1Valid = true;
+    }
+    else if(tag == tag2)
+    {
+      data2 = cdb.getDataValue();
+      data2Valid = true;
+    }
+
   }
 
   public boolean isReady() {
@@ -52,6 +66,27 @@ public class ReservationStation {
   }
 
   public void loadInst(IssuedInst inst) {
-    // TODO add code to insert inst into reservation station
+    destTag = inst.getRegDestTag();
+    tag1 = inst.getRegSrc1Tag();
+    tag2 = inst.getRegSrc2Tag();
+
+    data1Valid = false;
+    data2Valid = false;
+
+    int reg1 = inst.getRegSrc1();
+    int reg2 = inst.getRegSrc2();
+    RegisterFile regs = simulator.regs;
+    if(regs.getSlotForReg(reg1) == -1)
+    {
+      data1 = regs.getReg(reg1);
+      data1Valid = true;
+    }
+    if(regs.getSlotForReg(reg2) == -1)
+    {
+      data2 = regs.getReg(reg2);
+      data2Valid = true;
+    }
+
+    function = inst.getOpcode();
   }
 }
