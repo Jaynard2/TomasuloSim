@@ -81,9 +81,17 @@ public class ReservationStation {
       data1 = regs.getReg(reg1);
       data1Valid = true;
     }
-    if(inst.regSrc2Used && regs.getSlotForReg(reg2) == -1)
+    if(inst.regSrc2Used)
     {
-      data2 = regs.getReg(reg2);
+      if(regs.getSlotForReg(reg2) == -1)
+      {
+        data2 = regs.getReg(reg2);
+        data2Valid = true;
+      }
+    }
+    else
+    {
+      data2 = inst.getImmediate();
       data2Valid = true;
     }
 

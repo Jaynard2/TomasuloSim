@@ -7,6 +7,7 @@ public class IssueUnit {
     PipelineSimulator simulator;
     IssuedInst issuee;
     Object fu;
+    int srcTag = 0;
 
     public IssueUnit(PipelineSimulator sim) {
       simulator = sim;
@@ -43,23 +44,12 @@ public class IssueUnit {
 
       if(!simulator.getROB().isFull() && !fu.isFull())
       {
-        IssuedInst issue = new IssuedInst();
-        if(inst instanceof RTypeInst)
-        {
-          RTypeInst rinst = (RTypeInst)inst;
-          issue.regDest = rinst.getRD();
-          issue.regSrc1 = rinst.getRS();
-          issue.regSrc2 = rinst.getRD();
-          issue.regDestUsed = issue.regSrc1Used = issue.regSrc2Used = true;
-        }
-        else if(inst instanceof ITypeInst)
-        {
-          ITypeInst iinst = (ITypeInst)inst;
-          issue.regDest = iinst.getRT();
-          issue.regSrc1 = iinst.getRS();
-          issue.immediate = iinst.getImmed();
-          issue.regDestUsed = issue.regSrc1Used = true;
-        }
+        IssuedInst issue = IssuedInst.createIssuedInst(inst);
+        issue.pc = addr;
+        
+        issue.regSrc1Tag = srcTag++;
+        issue.regSrc2Tag = srcTag++;
+        issue.regDestTag = simulator.getROB().rearQ;
 
         fu.acceptIssue(issue);
         simulator.getROB().updateInstForIssue(issue);
