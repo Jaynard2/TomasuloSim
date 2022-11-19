@@ -76,12 +76,12 @@ public class ReservationStation {
     int reg1 = inst.getRegSrc1();
     int reg2 = inst.getRegSrc2();
     RegisterFile regs = simulator.regs;
-    if(regs.getSlotForReg(reg1) == -1)
+    if(inst.regSrc1Used && regs.getSlotForReg(reg1) == -1)
     {
       data1 = regs.getReg(reg1);
       data1Valid = true;
     }
-    if(regs.getSlotForReg(reg2) == -1)
+    if(inst.regSrc2Used && regs.getSlotForReg(reg2) == -1)
     {
       data2 = regs.getReg(reg2);
       data2Valid = true;

@@ -76,4 +76,9 @@ public abstract class FunctionalUnit {
     }
   }
 
+  public boolean isFull()
+  {
+    return stations[0].function != INST_TYPE.NOP && stations[1].function != INST_TYPE.NOP;
+  }
+
 }

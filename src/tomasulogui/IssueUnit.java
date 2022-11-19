@@ -25,6 +25,48 @@ public class IssueUnit {
       //    so that we can forward during issue
 
       // We then send this to the FU, who stores in reservation station
+      int addr = simulator.getPCStage().getPC();
+      Instruction inst = simulator.getMemory().getInstAtAddr(addr);
+      int code = inst.getOpcode();
+      FunctionalUnit fu;
+      switch(code)
+      {
+      case Instruction.INST_MUL:
+        fu = simulator.multiplier;
+        break;
+      case Instruction.INST_DIV:
+        fu = simulator.divider;
+        break;
+      default:
+        fu = simulator.alu;
+      }
+
+      if(!simulator.getROB().isFull() && !fu.isFull())
+      {
+        IssuedInst issue = new IssuedInst();
+        if(inst instanceof RTypeInst)
+        {
+          RTypeInst rinst = (RTypeInst)inst;
+          issue.regDest = rinst.getRD();
+          issue.regSrc1 = rinst.getRS();
+          issue.regSrc2 = rinst.getRD();
+          issue.regDestUsed = issue.regSrc1Used = issue.regSrc2Used = true;
+        }
+        else if(inst instanceof ITypeInst)
+        {
+          ITypeInst iinst = (ITypeInst)inst;
+          issue.regDest = iinst.getRT();
+          issue.regSrc1 = iinst.getRS();
+          issue.immediate = iinst.getImmed();
+          issue.regDestUsed = issue.regSrc1Used = true;
+        }
+
+        fu.acceptIssue(issue);
+        simulator.getROB().updateInstForIssue(issue);
+
+        simulator.getPCStage().incrPC();
+      }
+
     }
 
   }
