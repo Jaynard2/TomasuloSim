@@ -419,6 +419,15 @@ public class PipelineSimulator {
         cdb.setDataValue(result);
         cdb.setDataValid(true);
       }
+      else if(loader.isRequestingWriteback())
+      {
+        int result = loader.getWriteData();
+        int tag = loader.getWriteTag();
+        cdb.setDataTag(tag);
+        cdb.setDataValue(result);
+        cdb.setDataValid(true);
+        loader.setCanWriteback();
+      }
       if(cdb.dataValid)
       {
         ROBEntry entry = reorder.getEntryByTag(cdb.dataTag);
@@ -428,11 +437,11 @@ public class PipelineSimulator {
 
     }
 
-    public static void main(String[] args) {
-      PipelineSimulator sim = new PipelineSimulator();
-//    sim.getMemory().printObjectCode();
-      sim.simulate();
-    }
+//     public static void main(String[] args) {
+//       PipelineSimulator sim = new PipelineSimulator();
+// //    sim.getMemory().printObjectCode();
+//       sim.simulate();
+//     }
 
     private void jbInit() throws Exception {
     }
