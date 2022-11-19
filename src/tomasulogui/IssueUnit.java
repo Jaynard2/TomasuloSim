@@ -47,8 +47,22 @@ public class IssueUnit {
         issuee = IssuedInst.createIssuedInst(inst);
         issuee.pc = addr;
         
-        issuee.regSrc1Tag = srcTag++;
-        issuee.regSrc2Tag = srcTag++;
+        if (issuee.regSrc1 != -1)
+          issuee.regSrc1Tag = simulator.getROB().getTagForReg(issuee.regSrc1);
+        else
+        {
+          issuee.regSrc1Tag = 0;
+          issuee.regSrc1Value = simulator.getROB().getDataForReg(issuee.regSrc1);
+        }
+        
+        if (issuee.regSrc2 != -1)
+          issuee.regSrc2Tag = simulator.getROB().getTagForReg(issuee.regSrc2);
+        else
+        {
+          issuee.regSrc2Tag = 0;
+          issuee.regSrc2Value = simulator.getROB().getDataForReg(issuee.regSrc2);
+        }
+        
         issuee.regDestTag = simulator.getROB().rearQ;
 
         fu.acceptIssue(issuee);
