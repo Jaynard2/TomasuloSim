@@ -29,7 +29,7 @@ public class IssueUnit {
       int addr = simulator.getPCStage().getPC();
       Instruction inst = simulator.getMemory().getInstAtAddr(addr);
       int code = inst.getOpcode();
-      FunctionalUnit fu;
+      FunctionalUnit fu = null;
       switch(code)
       {
       case Instruction.INST_MUL:
@@ -38,11 +38,20 @@ public class IssueUnit {
       case Instruction.INST_DIV:
         fu = simulator.divider;
         break;
+      case Instruction.INST_LW:
+      case Instruction.INST_SW:
+      case Instruction.INST_BEQ:
+      case Instruction.INST_BGEZ:
+      case Instruction.INST_BGTZ:
+      case Instruction.INST_BLEZ:
+      case Instruction.INST_BLTZ:
+      case Instruction.INST_BNE:
+        break;
       default:
         fu = simulator.alu;
       }
 
-      if(!simulator.getROB().isFull() && !fu.isFull())
+      if(fu != null && !simulator.getROB().isFull() && !fu.isFull())
       {
         issuee = IssuedInst.createIssuedInst(inst);
         issuee.pc = addr;
@@ -53,7 +62,7 @@ public class IssueUnit {
             issuee.regSrc1Tag = simulator.getROB().getTagForReg(issuee.regSrc1);
           else
           {
-            issuee.regSrc1Tag = 0;
+            issuee.regSrc1Tag = -1;
             issuee.regSrc1Value = simulator.getROB().getDataForReg(issuee.regSrc1);
           }
         }
@@ -64,12 +73,13 @@ public class IssueUnit {
             issuee.regSrc2Tag = simulator.getROB().getTagForReg(issuee.regSrc2);
           else
           {
-            issuee.regSrc2Tag = 0;
+            issuee.regSrc2Tag = -1;
             issuee.regSrc2Value = simulator.getROB().getDataForReg(issuee.regSrc2);
           }
         }
         
         issuee.regDestTag = simulator.getROB().rearQ;
+        simulator.regs.setSlotForReg(issuee.regDest, issuee.regDestTag);
 
         fu.acceptIssue(issuee);
         simulator.getROB().updateInstForIssue(issuee);
