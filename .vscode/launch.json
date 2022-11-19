@@ -1,0 +1,35 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Launch Assembler",
+            "request": "launch",
+            "mainClass": "tomasulogui.Assembler",
+            "projectName": "TomasuloSim_15bb1a9e"
+        },
+        {
+            "type": "java",
+            "name": "Launch PipelineSimulator",
+            "request": "launch",
+            "mainClass": "tomasulogui.PipelineSimulator",
+            "projectName": "TomasuloSim_15bb1a9e"
+        },
+        {
+            "type": "java",
+            "name": "Launch TomasuloGUIApp",
+            "request": "launch",
+            "mainClass": "tomasulogui.TomasuloGUIApp",
+            "projectName": "TomasuloSim_15bb1a9e"
+        }
+    ]
+}

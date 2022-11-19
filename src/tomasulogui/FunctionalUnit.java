@@ -11,13 +11,13 @@ public abstract class FunctionalUnit {
   
   public FunctionalUnit(PipelineSimulator sim) {
     simulator = sim;
-    stations[0] = new ReservationStation(sim);
-    stations[1] = new ReservationStation(sim);
+    stations[0] = null;
+    stations[1] = null;
   }
  
   public void squashAll() {
-    stations[0].loadInst(IssuedInst.createIssuedInst(Instruction.getInstructionFromName("NOP")));
-    stations[1].loadInst(IssuedInst.createIssuedInst(Instruction.getInstructionFromName("NOP")));
+    stations[0] = null;
+    stations[1] = null;
     currCycleCount = 0;
     curStation = -1;
     needsCDB = false;
@@ -29,8 +29,10 @@ public abstract class FunctionalUnit {
 
   public void execCycle(CDB cdb) {
     //todo - start executing, ask for CDB, etc.
-    stations[0].snoop(cdb);
-    stations[1].snoop(cdb);
+    if(stations[0] != null)
+      stations[0].snoop(cdb);
+    if(stations[1] != null)
+      stations[1].snoop(cdb);
 
     if(curStation != -1 && currCycleCount < getExecCycles())
     {
@@ -47,12 +49,12 @@ public abstract class FunctionalUnit {
     needsCDB = false;
     currCycleCount = 0;
     int oldCurStation = curStation;
-    if(oldCurStation != -1 && stations[(oldCurStation + 1) % 2].isReady())
+    if(oldCurStation != -1 && stations[(oldCurStation + 1) % 2] != null && stations[(oldCurStation + 1) % 2].isReady())
       curStation = (curStation + 1) % 2;
     else
       curStation = -1;
 
-    stations[oldCurStation].loadInst(IssuedInst.createIssuedInst(Instruction.getInstructionFromName("NOP")));
+    stations[oldCurStation] = null;
 
     return curStation;
   }
@@ -66,8 +68,9 @@ public abstract class FunctionalUnit {
   {
     for(int i = 0; i < 2; i++)
     {
-      if(stations[i].function == INST_TYPE.NOP)
+      if(stations[i] == null)
       {
+        stations[i] = new ReservationStation(simulator);
         stations[i].loadInst(inst);
         if(curStation == -1)
           curStation = i;
@@ -78,7 +81,7 @@ public abstract class FunctionalUnit {
 
   public boolean isFull()
   {
-    return stations[0].function != INST_TYPE.NOP && stations[1].function != INST_TYPE.NOP;
+    return stations[0] != null && stations[1] != null;
   }
 
 }

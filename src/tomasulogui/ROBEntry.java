@@ -67,6 +67,8 @@ public class ROBEntry {
     // of the project.  It does 2 things:
     // 1. update the instruction, as shown in 2nd line of code above
     // 2. update the fields of the ROBEntry, as shown in the 1st line of code above
+    instPC = inst.pc;
+    writeReg = inst.regDest;
 
   }
 
