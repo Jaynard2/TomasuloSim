@@ -46,6 +46,11 @@ public abstract class FunctionalUnit {
 
   public int getCurrentStation()
   {
+    return curStation;
+  }
+
+  public void retireStation(int station)
+  {
     needsCDB = false;
     currCycleCount = 0;
     int oldCurStation = curStation;
@@ -55,8 +60,6 @@ public abstract class FunctionalUnit {
       curStation = -1;
 
     stations[oldCurStation] = null;
-
-    return curStation;
   }
 
   public int getTag(int station)

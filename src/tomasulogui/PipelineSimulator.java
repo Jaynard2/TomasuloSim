@@ -394,6 +394,7 @@ public class PipelineSimulator {
         int station = divider.getCurrentStation();
         int result = divider.calculateResult(station);
         int tag = divider.getTag(station);
+        divider.retireStation(station);
         cdb.setDataTag(tag);
         cdb.setDataValue(result);
         cdb.setDataValid(true);
@@ -403,6 +404,7 @@ public class PipelineSimulator {
         int station = multiplier.getCurrentStation();
         int result = multiplier.calculateResult(station);
         int tag = multiplier.getTag(station);
+        multiplier.retireStation(station);
         cdb.setDataTag(tag);
         cdb.setDataValue(result);
         cdb.setDataValid(true);
@@ -412,9 +414,16 @@ public class PipelineSimulator {
         int station = alu.getCurrentStation();
         int result = alu.calculateResult(station);
         int tag = alu.getTag(station);
+        alu.retireStation(station);
         cdb.setDataTag(tag);
         cdb.setDataValue(result);
         cdb.setDataValid(true);
+      }
+      if(cdb.dataValid)
+      {
+        ROBEntry entry = reorder.getEntryByTag(cdb.dataTag);
+        entry.complete = true;
+        entry.writeValue = cdb.dataValue;
       }
 
     }

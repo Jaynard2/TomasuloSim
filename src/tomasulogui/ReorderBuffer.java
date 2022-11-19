@@ -43,7 +43,7 @@ public class ReorderBuffer {
     // 3. isStore
     ROBEntry retiree = buff[frontQ];
 
-    if (retiree == null) {
+    if (retiree == null || !retiree.complete) {
       return false;
     }
 
