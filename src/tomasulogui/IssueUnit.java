@@ -18,12 +18,12 @@ public class IssueUnit {
       // 1. checking if ROB and Reservation Station avail
       // 2. issuing to reservation station, if no structural hazard
 
-      // to issue, we make an IssuedInst, filling in what we know
+      // to issuee, we make an IssuedInst, filling in what we know
       // We check the BTB, and put prediction if branch, updating PC
       //     if pred taken, incr PC otherwise
       // We then send this to the ROB, which fills in the data fields
       // We then check the CDB, and see if it is broadcasting data we need,
-      //    so that we can forward during issue
+      //    so that we can forward during issuee
 
       // We then send this to the FU, who stores in reservation station
       int addr = simulator.getPCStage().getPC();
@@ -44,15 +44,15 @@ public class IssueUnit {
 
       if(!simulator.getROB().isFull() && !fu.isFull())
       {
-        IssuedInst issue = IssuedInst.createIssuedInst(inst);
-        issue.pc = addr;
+        issuee = IssuedInst.createIssuedInst(inst);
+        issuee.pc = addr;
         
-        issue.regSrc1Tag = srcTag++;
-        issue.regSrc2Tag = srcTag++;
-        issue.regDestTag = simulator.getROB().rearQ;
+        issuee.regSrc1Tag = srcTag++;
+        issuee.regSrc2Tag = srcTag++;
+        issuee.regDestTag = simulator.getROB().rearQ;
 
-        fu.acceptIssue(issue);
-        simulator.getROB().updateInstForIssue(issue);
+        fu.acceptIssue(issuee);
+        simulator.getROB().updateInstForIssue(issuee);
 
         simulator.getPCStage().incrPC();
       }
