@@ -9,9 +9,16 @@ public class IntMult extends FunctionalUnit {
     }
 
     public int calculateResult(int station) {
-        int result = 0;
-        return result;
+        
+        ReservationStation cur = stations[station];
+        IssuedInst.INST_TYPE inst = cur.getFunction();
 
+        if(inst == IssuedInst.INST_TYPE.MUL)
+        {
+            return cur.data1 * cur.data2;
+        }
+
+        return 0;
     }
 
     public int getExecCycles() {
