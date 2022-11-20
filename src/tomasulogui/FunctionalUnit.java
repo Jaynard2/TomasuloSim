@@ -45,9 +45,11 @@ public abstract class FunctionalUnit {
     if(currCycleCount < getExecCycles() && stations[curStation].isReady())
     {
       currCycleCount++;
-      if(currCycleCount == getExecCycles())
-        needsCDB = true;
     } 
+    else if(currCycleCount == getExecCycles())
+    {
+      needsCDB = true;
+    }
   }
 
   public int getCurrentStation()

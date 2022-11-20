@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch TomasuloGUIApp",
+            "request": "launch",
+            "mainClass": "tomasulogui.TomasuloGUIApp",
+            "projectName": "Project 4_11293fbb"
+        },
+        {
+            "type": "java",
+            "name": "Launch Assembler",
+            "request": "launch",
+            "mainClass": "tomasulogui.Assembler",
+            "projectName": "Project 4_11293fbb"
+        },
+        {
+            "type": "java",
             "name": "Launch Current File",
             "request": "launch",
             "mainClass": "${file}"

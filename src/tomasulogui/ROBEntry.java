@@ -40,13 +40,12 @@ public class ROBEntry {
     return opcode;
   }
 
-
   public boolean isHaltOpcode() {
     return (opcode == IssuedInst.INST_TYPE.HALT);
   }
 
   public void setBranchTaken(boolean result) {
-  // TODO - maybe more than simple set
+    // TODO - maybe more than simple set
   }
 
   public int getWriteReg() {

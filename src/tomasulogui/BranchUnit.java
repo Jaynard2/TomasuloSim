@@ -10,8 +10,31 @@ public class BranchUnit
     }
 
     public int calculateResult(int station) {
-        // todo fill in
-        return 0;
+        
+        ReservationStation cur = stations[station];
+        IssuedInst.INST_TYPE inst = cur.getFunction();
+/*
+        // Returning target address??
+        switch(inst)
+        {
+            case J:
+            case JAL:
+            case JR:
+            case JALR:
+            case BEQ:
+            case BGEZ:
+            case BGTZ:
+            case BLEZ:
+            case BLTZ:
+            case BNE:
+                return cur.getDestTag();
+            default:
+                return 0;
+        }
+*/
+
+        int result = 1;
+        return result;
     }
 
     public int getExecCycles() {

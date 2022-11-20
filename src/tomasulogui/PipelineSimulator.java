@@ -428,13 +428,16 @@ public class PipelineSimulator {
         cdb.setDataValid(true);
         loader.setCanWriteback();
       }
+
+      reorder.readCDB(cdb);
+/*    This function was moved to readCDB in the reorder buffer
       if(cdb.dataValid)
       {
         ROBEntry entry = reorder.getEntryByTag(cdb.dataTag);
         entry.complete = true;
         entry.writeValue = cdb.dataValue;
       }
-
+*/
     }
 
 //     public static void main(String[] args) {
