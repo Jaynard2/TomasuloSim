@@ -15,19 +15,30 @@ public class IntAlu extends FunctionalUnit{
 
     ReservationStation cur = stations[station];
     INST_TYPE inst = cur.getFunction();
+    int d1 = cur.getData1();
+    int d2 = cur.getData2();
     switch(inst)
     {
     case ADD:
     case ADDI:
-      return cur.getData1() + cur.getData2();
+      return d1 + d2;
     case SUB:
-      return cur.getData1() - cur.getData2();
+      return d1 - d2;
     case SLL:
-      return cur.getData1() << cur.getData2();
+      return d1 << d2;
     case SRL:
-      return cur.getData1() >> cur.getData2();
+      return d1 >> d2;
     case SRA:
-      return cur.getData1() >>> cur.getData2();
+      return d1 >>> d2;
+    case AND:
+    case ANDI:
+      return d1 & d2;
+    case OR:
+    case ORI:
+      return d1 | d2;
+    case XOR:
+    case XORI:
+      return d1 ^ d2;
     default:
       return 0;
     }
