@@ -1,7 +1,5 @@
 package tomasulogui;
 
-import tomasulogui.IssuedInst.INST_TYPE;
-
 public abstract class FunctionalUnit {
   PipelineSimulator simulator;
   ReservationStation[] stations = new ReservationStation[2];
@@ -29,12 +27,22 @@ public abstract class FunctionalUnit {
 
   public void execCycle(CDB cdb) {
     //todo - start executing, ask for CDB, etc.
+    if(curStation == -1)
+      return;
+
     if(stations[0] != null)
       stations[0].snoop(cdb);
     if(stations[1] != null)
       stations[1].snoop(cdb);
 
-    if(curStation != -1 && currCycleCount < getExecCycles() && stations[curStation].isReady())
+    // If the current instruction is not ready, but the other is, execute the other
+    if(stations[0] != null && stations[1] != null)
+    {
+      if(!stations[curStation].isReady() && stations[(curStation + 1) % 2].isReady())
+        curStation = (curStation + 1) % 2;
+    }
+
+    if(currCycleCount < getExecCycles() && stations[curStation].isReady())
     {
       currCycleCount++;
       if(currCycleCount == getExecCycles())
@@ -56,7 +64,6 @@ public abstract class FunctionalUnit {
       curStation = (curStation + 1) % 2;
     else
       curStation = -1;
-    System.out.println("Removing " + station);
     stations[oldCurStation] = null;
   }
 
