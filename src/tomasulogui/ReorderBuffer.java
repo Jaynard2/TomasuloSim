@@ -64,6 +64,11 @@ public class ReorderBuffer {
         setTagForReg(retiree.getWriteReg(), -1);
       }
     }
+    else
+    {
+      int storeLocation = retiree.storeLoc + retiree.storeOffset;
+      simulator.getMemory().setIntDataAtAddr(storeLocation, retiree.writeValue);
+    }
 
       // if mispredict branch, won't do normal advance
       if (shouldAdvance) {
@@ -80,7 +85,28 @@ public class ReorderBuffer {
     // could be destination reg
     // could be store address source
 
-    // TODO body of method
+    if(cdb.dataValid)
+    {
+      // Loop to handle stores
+      int front = Math.min(frontQ, rearQ);
+      int back = Math.max(frontQ, rearQ);
+      for(int i = front; i < back; i++)
+      {
+        ROBEntry entry = buff[i];
+        if(entry.tag == cdb.dataTag)
+        {
+          if(entry.locTag == -1)
+            entry.complete = true;
+          entry.writeValue = cdb.dataValue;
+        }
+        if(entry.locTag == cdb.dataTag)
+        {
+          entry.storeLoc = cdb.dataValue;
+          if(entry.writeValue != -1)
+            entry.complete = true;
+        }
+      }
+    }
   }
 
   public void updateInstForIssue(IssuedInst inst) {

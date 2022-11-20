@@ -1,5 +1,7 @@
 package tomasulogui;
 
+import java.util.function.IntUnaryOperator;
+
 public class IssueUnit {
   private enum EXEC_TYPE {
     NONE, LOAD, ALU, MULT, DIV, BRANCH} ;
@@ -44,12 +46,18 @@ public class IssueUnit {
         fu = simulator.loader;
         break;
       case Instruction.INST_SW:
+        break;
       case Instruction.INST_BEQ:
       case Instruction.INST_BGEZ:
       case Instruction.INST_BGTZ:
       case Instruction.INST_BLEZ:
       case Instruction.INST_BLTZ:
       case Instruction.INST_BNE:
+      case Instruction.INST_J:
+      case Instruction.INST_JAL:
+      case Instruction.INST_JALR:
+      case Instruction.INST_JR:
+        fu = simulator.branchUnit;
         break;
       default:
         fu = simulator.alu;
@@ -61,9 +69,10 @@ public class IssueUnit {
         handleTags(issuee);
         
         issuee.regDestTag = simulator.getROB().rearQ;
-        simulator.regs.setSlotForReg(issuee.regDest, issuee.regDestTag);
+        if(issuee.regDest != -1)
+          simulator.regs.setSlotForReg(issuee.regDest, issuee.regDestTag);
         
-        if(fu instanceof FunctionalUnit && !((FunctionalUnit)fu).isFull())
+        if((fu instanceof FunctionalUnit) && !((FunctionalUnit)fu).isFull())
         {
           ((FunctionalUnit)fu).acceptIssue(issuee);
           simulator.getPCStage().incrPC();
@@ -72,6 +81,17 @@ public class IssueUnit {
         else if(fu instanceof LoadBuffer && ((LoadBuffer)fu).isReservationStationAvail())
         {
           ((LoadBuffer)fu).acceptIssue(issuee);
+          simulator.getPCStage().incrPC();
+          simulator.getROB().updateInstForIssue(issuee);
+        }
+        else // Must be store
+        {
+          issuee.regSrc1Tag = simulator.regs.getSlotForReg(issuee.getRegSrc1());
+          issuee.regSrc2Tag = simulator.regs.getSlotForReg(issuee.getRegSrc2());
+          if(issuee.regSrc1Tag == -1)
+            issuee.regSrc1Value = simulator.regs.getReg(issuee.getRegSrc1());
+          if(issuee.regSrc2Tag == -1)
+            issuee.regSrc2Value = simulator.regs.getReg(issuee.getRegSrc2());
           simulator.getPCStage().incrPC();
           simulator.getROB().updateInstForIssue(issuee);
         }

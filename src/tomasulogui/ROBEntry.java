@@ -1,5 +1,8 @@
 package tomasulogui;
 
+import java.util.AbstractMap.SimpleImmutableEntry;
+
+import tomasulogui.IssuedInst.INST_TYPE;
 
 public class ROBEntry {
   ReorderBuffer rob;
@@ -13,6 +16,9 @@ public class ROBEntry {
   int writeReg = -1;
   int writeValue = -1;
   int tag = -1;
+  int locTag = -1;
+  int storeOffset = -1;
+  int storeLoc = -1;
 
   IssuedInst.INST_TYPE opcode;
 
@@ -72,6 +78,24 @@ public class ROBEntry {
     instPC = inst.pc;
     writeReg = inst.regDest;
     tag = inst.regDestTag;
+    opcode = inst.getOpcode();
+    if(inst.getOpcode() == INST_TYPE.STORE)
+    {
+      storeOffset = inst.getImmediate();
+      tag = inst.getRegSrc1Tag();
+      locTag = inst.getRegSrc2Tag();
+      if(locTag == -1)
+      {
+        storeLoc = inst.getRegSrc2Value();
+      }
+
+      if(tag == -1)
+      {
+        if(locTag == -1)
+          complete = true;
+        writeValue = inst.getRegSrc1Value();
+      }
+    }
 
   }
 

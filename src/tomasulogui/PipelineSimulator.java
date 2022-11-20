@@ -428,12 +428,7 @@ public class PipelineSimulator {
         cdb.setDataValid(true);
         loader.setCanWriteback();
       }
-      if(cdb.dataValid)
-      {
-        ROBEntry entry = reorder.getEntryByTag(cdb.dataTag);
-        entry.complete = true;
-        entry.writeValue = cdb.dataValue;
-      }
+      reorder.readCDB(cdb);
 
     }
 
