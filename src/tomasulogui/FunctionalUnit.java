@@ -34,7 +34,7 @@ public abstract class FunctionalUnit {
     if(stations[1] != null)
       stations[1].snoop(cdb);
 
-    if(curStation != -1 && currCycleCount < getExecCycles())
+    if(curStation != -1 && currCycleCount < getExecCycles() && stations[curStation].isReady())
     {
       currCycleCount++;
       if(currCycleCount == getExecCycles())
