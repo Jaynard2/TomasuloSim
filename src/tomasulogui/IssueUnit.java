@@ -10,6 +10,9 @@ public class IssueUnit {
     IssuedInst issuee;
     Object fu;
     int srcTag = 0;
+    boolean stalled = false;
+    int addr;
+    int code;
 
     public IssueUnit(PipelineSimulator sim) {
       simulator = sim;
@@ -28,40 +31,44 @@ public class IssueUnit {
       //    so that we can forward during issuee
 
       // We then send this to the FU, who stores in reservation station
-      int addr = simulator.getPCStage().getPC();
-      Instruction inst = simulator.getMemory().getInstAtAddr(addr);
-      int code = inst.getOpcode();
-      issuee = IssuedInst.createIssuedInst(inst);
-      Object fu = null;
-
-      switch(code)
+      if(!stalled)
       {
-      case Instruction.INST_MUL:
-        fu = simulator.multiplier;
-        break;
-      case Instruction.INST_DIV:
-        fu = simulator.divider;
-        break;
-      case Instruction.INST_LW:
-        fu = simulator.loader;
-        break;
-      case Instruction.INST_SW:
-        break;
-      case Instruction.INST_BEQ:
-      case Instruction.INST_BGEZ:
-      case Instruction.INST_BGTZ:
-      case Instruction.INST_BLEZ:
-      case Instruction.INST_BLTZ:
-      case Instruction.INST_BNE:
-      case Instruction.INST_J:
-      case Instruction.INST_JAL:
-      case Instruction.INST_JALR:
-      case Instruction.INST_JR:
-        fu = simulator.branchUnit;
-        break;
-      default:
-        fu = simulator.alu;
+        addr = simulator.getPCStage().getPC();
+        Instruction inst = simulator.getMemory().getInstAtAddr(addr);
+        code = inst.getOpcode();
+        issuee = IssuedInst.createIssuedInst(inst);
+        fu = null;
+
+        switch(code)
+        {
+        case Instruction.INST_MUL:
+          fu = simulator.multiplier;
+          break;
+        case Instruction.INST_DIV:
+          fu = simulator.divider;
+          break;
+        case Instruction.INST_LW:
+          fu = simulator.loader;
+          break;
+        case Instruction.INST_SW:
+          break;
+        case Instruction.INST_BEQ:
+        case Instruction.INST_BGEZ:
+        case Instruction.INST_BGTZ:
+        case Instruction.INST_BLEZ:
+        case Instruction.INST_BLTZ:
+        case Instruction.INST_BNE:
+        case Instruction.INST_J:
+        case Instruction.INST_JAL:
+        case Instruction.INST_JALR:
+        case Instruction.INST_JR:
+          fu = simulator.branchUnit;
+          break;
+        default:
+          fu = simulator.alu;
+        }
       }
+      stalled = false;
 
       if(!simulator.getROB().isFull())
       {
@@ -84,7 +91,7 @@ public class IssueUnit {
           simulator.getPCStage().incrPC();
           simulator.getROB().updateInstForIssue(issuee);
         }
-        else // Must be store
+        else if(code == Instruction.INST_SW)
         {
           issuee.regSrc1Tag = simulator.regs.getSlotForReg(issuee.getRegSrc1());
           issuee.regSrc2Tag = simulator.regs.getSlotForReg(issuee.getRegSrc2());
@@ -95,6 +102,9 @@ public class IssueUnit {
           simulator.getPCStage().incrPC();
           simulator.getROB().updateInstForIssue(issuee);
         }
+        else // Stall
+          stalled = true;
+          
       }
 
     }
@@ -105,14 +115,43 @@ public class IssueUnit {
       {
         issue.regSrc1Tag = -1;
         if (simulator.regs.getSlotForReg(issue.regSrc1) != -1)
+        {
           issue.regSrc1Tag = simulator.getROB().getTagForReg(issue.regSrc1);
+          ROBEntry entry = simulator.getROB().getEntryByTag(issue.regSrc1Tag);
+          if(entry.isComplete())
+          {
+            issue.regSrc1Tag = -1;
+            issue.regSrc1Value = entry.writeValue;
+            issue.regSrc1Valid = true;
+          }
+
+        }
+        else
+        {
+          issue.regSrc1Value = simulator.regs.getReg(issue.regSrc1);
+          issue.regSrc1Valid = true;
+        }
       }
 
       if (issue.regSrc2Used)
       {
         issue.regSrc2Tag = -1;
         if (simulator.regs.getSlotForReg(issue.regSrc2) != -1)
+        {
           issue.regSrc2Tag = simulator.getROB().getTagForReg(issue.regSrc2);
+          ROBEntry entry = simulator.getROB().getEntryByTag(issue.regSrc2Tag);
+          if(entry.isComplete())
+          {
+            issue.regSrc2Tag = -1;
+            issue.regSrc2Value = entry.writeValue;
+            issue.regSrc2Valid = true;
+          }
+        }
+        else
+        {
+          issue.regSrc2Value = simulator.regs.getReg(issue.regSrc2);
+          issue.regSrc2Valid = true;
+        }
       }
     }
 

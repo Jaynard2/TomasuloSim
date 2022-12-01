@@ -305,6 +305,13 @@ public class PipelineSimulator {
         branchUnit.execCycle(cdb);
         loader.execCycle(cdb);
 
+      if(branchUnit.needsCDB)
+      {
+        int station = divider.getCurrentStation();
+        int result = branchUnit.calculateResult(station);
+        divider.retireStation(station);
+        pc.setPC(result);
+      }
         // this updates PC, so no call from here for that
         issue.execCycle();
 
@@ -375,10 +382,10 @@ public class PipelineSimulator {
       regs.squashAll();
 
       loader.squashAll();
-//      alu.squashAll();
-//      multiplier.squashAll();
-//      divider.squashAll();
-//      branchUnit.squashAll();
+      alu.squashAll();
+      multiplier.squashAll();
+      divider.squashAll();
+      branchUnit.squashAll();
       cdb.squashAll();
     }
 

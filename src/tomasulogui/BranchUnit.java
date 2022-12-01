@@ -13,28 +13,43 @@ public class BranchUnit
         
         ReservationStation cur = stations[station];
         IssuedInst.INST_TYPE inst = cur.getFunction();
-/*
-        // Returning target address??
+        
         switch(inst)
         {
+            case BEQ:
+                if(cur.data1 == cur.data2)
+                    return cur.getDestTag() - 4;
+                break;
+            case BGEZ:
+                if(cur.data1 >= 0)
+                    return cur.getDestTag() - 4;
+                break;
+            case BGTZ:
+                if(cur.data1 > 0)
+                    return cur.getDestTag() - 4;
+                break;
+            case BLEZ:
+                if(cur.data1 <= 0)
+                    return cur.getDestTag() - 4;
+                break;
+            case BLTZ:
+                if(cur.data1 < 0)
+                    return cur.getDestTag() - 4;
+                break;
+            case BNE:
+                if(cur.data1 != cur.data2)
+                    return cur.getDestTag() - 4;
+                break;
             case J:
             case JAL:
             case JR:
             case JALR:
-            case BEQ:
-            case BGEZ:
-            case BGTZ:
-            case BLEZ:
-            case BLTZ:
-            case BNE:
-                return cur.getDestTag();
+                return cur.getDestTag() - 4;
             default:
                 return 0;
         }
-*/
 
-        int result = 1;
-        return result;
+        return simulator.pc.pc;
     }
 
     public int getExecCycles() {

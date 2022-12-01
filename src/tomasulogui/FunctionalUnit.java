@@ -27,13 +27,26 @@ public abstract class FunctionalUnit {
 
   public void execCycle(CDB cdb) {
     //todo - start executing, ask for CDB, etc.
-    if(curStation == -1)
-      return;
 
     if(stations[0] != null)
       stations[0].snoop(cdb);
     if(stations[1] != null)
       stations[1].snoop(cdb);
+
+    if(curStation == -1)
+    {
+      for(int i = 0; i < 2; i++)
+      {
+        if(stations[i] != null && stations[i].isReady())
+        {
+          curStation = i;
+          break;
+        }
+      }
+    }
+
+    if(curStation == -1)
+      return;
 
     // If the current instruction is not ready, but the other is, execute the other
     if(stations[0] != null && stations[1] != null)
@@ -45,11 +58,11 @@ public abstract class FunctionalUnit {
     if(currCycleCount < getExecCycles() && stations[curStation].isReady())
     {
       currCycleCount++;
+      if(currCycleCount == getExecCycles())
+      {
+        needsCDB = true;
+      }
     } 
-    else if(currCycleCount == getExecCycles())
-    {
-      needsCDB = true;
-    }
   }
 
   public int getCurrentStation()
