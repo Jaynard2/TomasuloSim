@@ -40,6 +40,16 @@ public class BranchUnit
                 break;
             case JR:
             case JALR:
+                simulator.btb.setBranchAddress(entr.instPC, cur.data1);
+                if(cur.data1 == cur.branchAddr)
+                {
+                    entr.mispredicted = false;
+                    return simulator.pc.pc;
+                }
+                entr.mispredicted = true;
+                simulator.squashAllInsts();
+                return cur.data1;
+                
             // Do nothing - predict always correct
             case J:
             case JAL:
@@ -48,8 +58,14 @@ public class BranchUnit
         }
 
         entr.mispredicted = taken != entr.predictTaken;
-        if(taken)
-            return cur.getData2() + simulator.pc.getPC() - 4;
+        simulator.btb.setBranchResult(entr.instPC, taken);
+        if(entr.mispredicted)
+        {
+            simulator.squashAllInsts();
+            if(taken)
+                return cur.getData2() + simulator.pc.getPC() - 4;
+            return simulator.pc.pc;
+        }
 
         return simulator.pc.pc;
     }

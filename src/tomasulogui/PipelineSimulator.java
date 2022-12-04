@@ -387,6 +387,7 @@ public class PipelineSimulator {
       divider.squashAll();
       branchUnit.squashAll();
       cdb.squashAll();
+      reorder.squashAll();
     }
 
     public void updateCDB() {

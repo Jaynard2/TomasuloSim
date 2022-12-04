@@ -18,6 +18,15 @@ public class ReorderBuffer {
     regs = registers;
   }
 
+
+  public void squashAll()
+  {
+    buff = new ROBEntry[size];
+    frontQ = 0;
+    rearQ = 0;
+    numRetirees = 0;
+  }
+
   public ROBEntry getEntryByTag(int tag) {
     return buff[tag];
   }
@@ -61,7 +70,7 @@ public class ReorderBuffer {
       int storeLocation = retiree.storeLoc + retiree.storeOffset;
       simulator.getMemory().setIntDataAtAddr(storeLocation, retiree.writeValue);
     }
-    else if(!retiree.isBranch)
+    else if(!retiree.isBranch && retiree.getOpcode() != INST_TYPE.NOP)
     {
       if(getTagForReg(retiree.getWriteReg()) == retiree.tag)
       {

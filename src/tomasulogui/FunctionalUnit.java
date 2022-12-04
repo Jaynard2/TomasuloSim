@@ -79,7 +79,8 @@ public abstract class FunctionalUnit {
       curStation = (curStation + 1) % 2;
     else
       curStation = -1;
-    stations[oldCurStation] = null;
+    if(oldCurStation != -1)
+      stations[oldCurStation] = null;
   }
 
   public int getTag(int station)

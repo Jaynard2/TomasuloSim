@@ -7,6 +7,7 @@ public class ReservationStation {
   int tag2;
   int data1;
   int data2;
+  int branchAddr;
   boolean data1Valid = false;
   boolean data2Valid = false;
   // destTag doubles as branch tag
@@ -69,6 +70,7 @@ public class ReservationStation {
     destTag = inst.getRegDestTag();
     tag1 = inst.getRegSrc1Tag();
     tag2 = inst.getRegSrc2Tag();
+    branchAddr = inst.branchTgt;
 
     data1Valid = false;
     data2Valid = false;
