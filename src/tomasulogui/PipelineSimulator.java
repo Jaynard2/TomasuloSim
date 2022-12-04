@@ -307,9 +307,9 @@ public class PipelineSimulator {
 
       if(branchUnit.needsCDB)
       {
-        int station = divider.getCurrentStation();
+        int station = branchUnit.getCurrentStation();
         int result = branchUnit.calculateResult(station);
-        divider.retireStation(station);
+        branchUnit.retireStation(station);
         pc.setPC(result);
       }
         // this updates PC, so no call from here for that

@@ -10,7 +10,7 @@ public class IssueUnit {
     IssuedInst issuee;
     Object fu;
     int srcTag = 0;
-    boolean stalled = false;
+    int stallLength = 0;
     int addr;
     int code;
 
@@ -31,12 +31,13 @@ public class IssueUnit {
       //    so that we can forward during issuee
 
       // We then send this to the FU, who stores in reservation station
-      if(!stalled)
+      if(stallLength == 0)
       {
         addr = simulator.getPCStage().getPC();
         Instruction inst = simulator.getMemory().getInstAtAddr(addr);
         code = inst.getOpcode();
         issuee = IssuedInst.createIssuedInst(inst);
+        issuee.pc = simulator.pc.pc - 4;
         fu = null;
 
         switch(code)
@@ -52,6 +53,9 @@ public class IssueUnit {
           break;
         case Instruction.INST_SW:
           break;
+        case Instruction.INST_JAL:
+        case Instruction.INST_JALR:
+          stallLength = 30; // Stall until saved in reg
         case Instruction.INST_BEQ:
         case Instruction.INST_BGEZ:
         case Instruction.INST_BGTZ:
@@ -59,53 +63,52 @@ public class IssueUnit {
         case Instruction.INST_BLTZ:
         case Instruction.INST_BNE:
         case Instruction.INST_J:
-        case Instruction.INST_JAL:
-        case Instruction.INST_JALR:
         case Instruction.INST_JR:
           fu = simulator.branchUnit;
+          issuee.branch = true;
+          simulator.btb.predictBranch(issuee);
           break;
         default:
           fu = simulator.alu;
         }
-      }
-      stalled = false;
-
-      if(!simulator.getROB().isFull())
-      {
-        issuee.pc = addr;
-        handleTags(issuee);
-        
-        issuee.regDestTag = simulator.getROB().rearQ;
-        if(issuee.regDest != -1)
-          simulator.regs.setSlotForReg(issuee.regDest, issuee.regDestTag);
-        
-        if((fu instanceof FunctionalUnit) && !((FunctionalUnit)fu).isFull())
+        if(!simulator.getROB().isFull())
         {
-          ((FunctionalUnit)fu).acceptIssue(issuee);
-          simulator.getPCStage().incrPC();
-          simulator.getROB().updateInstForIssue(issuee);
-        }
-        else if(fu instanceof LoadBuffer && ((LoadBuffer)fu).isReservationStationAvail())
-        {
-          ((LoadBuffer)fu).acceptIssue(issuee);
-          simulator.getPCStage().incrPC();
-          simulator.getROB().updateInstForIssue(issuee);
-        }
-        else if(code == Instruction.INST_SW)
-        {
-          issuee.regSrc1Tag = simulator.regs.getSlotForReg(issuee.getRegSrc1());
-          issuee.regSrc2Tag = simulator.regs.getSlotForReg(issuee.getRegSrc2());
-          if(issuee.regSrc1Tag == -1)
-            issuee.regSrc1Value = simulator.regs.getReg(issuee.getRegSrc1());
-          if(issuee.regSrc2Tag == -1)
-            issuee.regSrc2Value = simulator.regs.getReg(issuee.getRegSrc2());
-          simulator.getPCStage().incrPC();
-          simulator.getROB().updateInstForIssue(issuee);
-        }
-        else // Stall
-          stalled = true;
+          issuee.pc = addr;
+          handleTags(issuee);
           
+          issuee.regDestTag = simulator.getROB().rearQ;
+          if(issuee.regDest != -1)
+            simulator.regs.setSlotForReg(issuee.regDest, issuee.regDestTag);
+          
+          if((fu instanceof FunctionalUnit) && !((FunctionalUnit)fu).isFull())
+          {
+            ((FunctionalUnit)fu).acceptIssue(issuee);
+            simulator.getPCStage().incrPC();
+            simulator.getROB().updateInstForIssue(issuee);
+          }
+          else if(fu instanceof LoadBuffer && ((LoadBuffer)fu).isReservationStationAvail())
+          {
+            ((LoadBuffer)fu).acceptIssue(issuee);
+            simulator.getPCStage().incrPC();
+            simulator.getROB().updateInstForIssue(issuee);
+          }
+          else if(code == Instruction.INST_SW)
+          {
+            issuee.regSrc1Tag = simulator.regs.getSlotForReg(issuee.getRegSrc1());
+            issuee.regSrc2Tag = simulator.regs.getSlotForReg(issuee.getRegSrc2());
+            if(issuee.regSrc1Tag == -1)
+              issuee.regSrc1Value = simulator.regs.getReg(issuee.getRegSrc1());
+            if(issuee.regSrc2Tag == -1)
+              issuee.regSrc2Value = simulator.regs.getReg(issuee.getRegSrc2());
+            simulator.getPCStage().incrPC();
+            simulator.getROB().updateInstForIssue(issuee);
+          }
+          else // Stall
+            stallLength++;
+        }          
       }
+      else
+        stallLength--;
 
     }
 

@@ -56,7 +56,12 @@ public class ReorderBuffer {
 
     boolean shouldAdvance = true;
 
-    if(retiree.getOpcode() != INST_TYPE.STORE)
+    if(retiree.getOpcode() == INST_TYPE.STORE)
+    {
+      int storeLocation = retiree.storeLoc + retiree.storeOffset;
+      simulator.getMemory().setIntDataAtAddr(storeLocation, retiree.writeValue);
+    }
+    else if(!retiree.isBranch)
     {
       if(getTagForReg(retiree.getWriteReg()) == retiree.tag)
       {
@@ -64,10 +69,11 @@ public class ReorderBuffer {
         setTagForReg(retiree.getWriteReg(), -1);
       }
     }
-    else
+    else if(retiree.getOpcode() == INST_TYPE.JAL || retiree.getOpcode() == INST_TYPE.JALR)
     {
-      int storeLocation = retiree.storeLoc + retiree.storeOffset;
-      simulator.getMemory().setIntDataAtAddr(storeLocation, retiree.writeValue);
+      regs.setReg(31, retiree.writeValue);
+      setTagForReg(31, -1);
+      simulator.issue.stallLength = 0;
     }
 
       // if mispredict branch, won't do normal advance

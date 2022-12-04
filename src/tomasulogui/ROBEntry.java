@@ -1,7 +1,5 @@
 package tomasulogui;
 
-import java.util.AbstractMap.SimpleImmutableEntry;
-
 import tomasulogui.IssuedInst.INST_TYPE;
 
 public class ROBEntry {
@@ -19,6 +17,7 @@ public class ROBEntry {
   int locTag = -1;
   int storeOffset = -1;
   int storeLoc = -1;
+  boolean isBranch = false;
 
   IssuedInst.INST_TYPE opcode;
 
@@ -78,21 +77,27 @@ public class ROBEntry {
     writeReg = inst.regDest;
     tag = inst.regDestTag;
     opcode = inst.getOpcode();
+    isBranch = inst.isBranch();
+    if(isBranch)
+    {
+      predictTaken = inst.branchPrediction;
+      writeValue = inst.getPC() + 4;
+    }
     if(inst.getOpcode() == INST_TYPE.STORE)
     {
       storeOffset = inst.getImmediate();
-      tag = inst.getRegSrc1Tag();
-      locTag = inst.getRegSrc2Tag();
+      tag = inst.getRegSrc2Tag();
+      locTag = inst.getRegSrc1Tag();
       if(locTag == -1)
       {
-        storeLoc = inst.getRegSrc2Value();
+        storeLoc = inst.getRegSrc1Value();
       }
 
       if(tag == -1)
       {
         if(locTag == -1)
           complete = true;
-        writeValue = inst.getRegSrc1Value();
+        writeValue = inst.getRegSrc2Value();
       }
     }
 

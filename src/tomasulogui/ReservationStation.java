@@ -73,9 +73,6 @@ public class ReservationStation {
     data1Valid = false;
     data2Valid = false;
 
-    int reg1 = inst.getRegSrc1();
-    int reg2 = inst.getRegSrc2();
-    RegisterFile regs = simulator.regs;
     if(inst.regSrc1Used)
     {
       data1Valid = inst.regSrc1Valid;
@@ -84,6 +81,8 @@ public class ReservationStation {
       else
         tag1 = inst.regSrc1Tag;
     }
+    else
+      data1Valid = true;
     if(inst.regSrc2Used)
     {
       data2Valid = inst.regSrc2Valid;

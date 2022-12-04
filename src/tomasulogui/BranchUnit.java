@@ -13,41 +13,43 @@ public class BranchUnit
         
         ReservationStation cur = stations[station];
         IssuedInst.INST_TYPE inst = cur.getFunction();
+
+        ROBEntry entr = simulator.reorder.buff[cur.getDestTag()];
+        entr.complete = true;
+        boolean taken = false;
         
         switch(inst)
         {
             case BEQ:
-                if(cur.data1 == cur.data2)
-                    return cur.getDestTag() - 4;
+                taken = cur.data1 == cur.data2;
                 break;
             case BGEZ:
-                if(cur.data1 >= 0)
-                    return cur.getDestTag() - 4;
+                taken = cur.data1 >= cur.data2;
                 break;
             case BGTZ:
-                if(cur.data1 > 0)
-                    return cur.getDestTag() - 4;
+                taken = cur.data1 > cur.data2;
                 break;
             case BLEZ:
-                if(cur.data1 <= 0)
-                    return cur.getDestTag() - 4;
+                taken = cur.data1 <= cur.data2;
                 break;
             case BLTZ:
-                if(cur.data1 < 0)
-                    return cur.getDestTag() - 4;
+                taken = cur.data1 < cur.data2;
                 break;
             case BNE:
-                if(cur.data1 != cur.data2)
-                    return cur.getDestTag() - 4;
+                taken = cur.data1 != cur.data2;
                 break;
-            case J:
-            case JAL:
             case JR:
             case JALR:
-                return cur.getDestTag() - 4;
+            // Do nothing - predict always correct
+            case J:
+            case JAL:
             default:
-                return 0;
+                return simulator.pc.pc;
         }
+
+        entr.mispredicted = taken != entr.predictTaken;
+        if(taken)
+            return cur.getData2() + simulator.pc.getPC() - 4;
 
         return simulator.pc.pc;
     }
