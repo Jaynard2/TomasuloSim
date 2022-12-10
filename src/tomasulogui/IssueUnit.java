@@ -68,6 +68,8 @@ public class IssueUnit {
           issuee.branch = true;
           simulator.btb.predictBranch(issuee);
           break;
+        case Instruction.INST_HALT:
+          stallLength = 30;
         default:
           fu = simulator.alu;
         }

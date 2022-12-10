@@ -63,7 +63,7 @@ public class BranchUnit
         {
             simulator.squashAllInsts();
             if(taken)
-                return cur.getData2() + simulator.pc.getPC() - 4;
+                return cur.branchAddr + 4;
             return simulator.pc.pc;
         }
 
