@@ -34,4 +34,10 @@ public class CDB {
     dataValid = false;
   }
 
+  public void squashTag(int tag)
+  {
+    if (tag == dataTag)
+      dataValid = false;
+  }
+
 }

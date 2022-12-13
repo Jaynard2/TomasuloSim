@@ -27,6 +27,26 @@ public class ReorderBuffer {
     numRetirees = 0;
   }
 
+  public void squashFromTag(int tag)
+  {
+    int rear = rearQ;
+      if(frontQ > rearQ)
+        rear = rearQ + 30;
+    for(int i = tag; i < rear; i++)
+    {
+      buff[i % 30] = null;
+
+      simulator.regs.squashTag(i % 30);
+      simulator.loader.squashTag(i % 30);
+      simulator.alu.squashTag(i % 30);
+      simulator.multiplier.squashTag(i % 30);
+      simulator.divider.squashTag(i % 30);
+      simulator.branchUnit.squashTag(i % 30);
+      simulator.cdb.squashTag(i % 30);
+    }
+    rearQ = tag;
+  }
+
   public ROBEntry getEntryByTag(int tag) {
     return buff[tag];
   }
@@ -103,11 +123,14 @@ public class ReorderBuffer {
     if(cdb.dataValid)
     {
       // Loop to handle stores
-      int front = Math.min(frontQ, rearQ);
-      int back = Math.max(frontQ, rearQ);
-      for(int i = front; i < back; i++)
+      int rear = rearQ;
+      if(frontQ > rearQ)
+        rear = rearQ + 30;
+      for(int i = frontQ; i < rear; i++)
       {
-        ROBEntry entry = buff[i];
+        ROBEntry entry = buff[i % 30];
+        if(entry == null)
+          continue;
         if(entry.tag == cdb.dataTag)
         {
           if(entry.locTag == -1)

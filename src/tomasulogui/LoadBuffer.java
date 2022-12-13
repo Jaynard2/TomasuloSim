@@ -44,6 +44,23 @@ public class LoadBuffer {
     requestWriteback = false;
   }
 
+  public void squashTag(int tag)
+  {
+    for(int i = 0; i < BUFFER_SIZE; i++)
+    {
+      if(buff[i] != null && buff[i].destTag == tag)
+      {
+        buff[i] = null;
+        if(writebackEntry == i)
+        {
+          writebackEntry = -1;
+          loadExecuting = false;
+          requestWriteback = false;
+        }
+      }
+    }
+  }
+
   public void execCycle(CDB cdb) {
     // first check if a reservation station was freed by writeback
     if (canWriteback) {

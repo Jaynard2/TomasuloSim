@@ -36,4 +36,13 @@ public class RegisterFile {
     }
   }
 
+  public void squashTag(int tag)
+  {
+    for(int i = 0; i < 32; i++)
+    {
+      if(robSlot[i] == tag)
+        robSlot[i] = -1;
+    }
+  }
+
 }

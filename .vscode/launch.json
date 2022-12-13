@@ -9,6 +9,13 @@
             "name": "Launch TomasuloGUIApp",
             "request": "launch",
             "mainClass": "tomasulogui.TomasuloGUIApp",
+            "projectName": "TomasuloSim_155b7354"
+        },
+        {
+            "type": "java",
+            "name": "Launch TomasuloGUIApp",
+            "request": "launch",
+            "mainClass": "tomasulogui.TomasuloGUIApp",
             "projectName": "Project 4_11293fbb"
         },
         {

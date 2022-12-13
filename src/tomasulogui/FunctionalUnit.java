@@ -21,6 +21,23 @@ public abstract class FunctionalUnit {
     needsCDB = false;
   }
 
+  public void squashTag(int tag)
+  {
+    for(int i = 0; i < 2; i++)
+    {
+      if(stations[i] != null && stations[i].destTag == tag)
+      {
+        stations[i] = null;
+        if(curStation == i)
+        {
+          curStation = -1;
+          needsCDB = false;
+          currCycleCount = 0;
+        }
+      }
+    }
+  }
+
   public abstract int calculateResult(int station);
 
   public abstract int getExecCycles();

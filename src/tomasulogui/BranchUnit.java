@@ -47,7 +47,7 @@ public class BranchUnit
                     return simulator.pc.pc;
                 }
                 entr.mispredicted = true;
-                simulator.squashAllInsts();
+                simulator.reorder.squashFromTag(cur.destTag);
                 return cur.data1;
                 
             // Do nothing - predict always correct
@@ -61,7 +61,7 @@ public class BranchUnit
         simulator.btb.setBranchResult(entr.instPC, taken);
         if(entr.mispredicted)
         {
-            simulator.squashAllInsts();
+            simulator.reorder.squashFromTag(cur.destTag);
             if(taken)
                 return cur.branchAddr + 4;
             return simulator.pc.pc;
