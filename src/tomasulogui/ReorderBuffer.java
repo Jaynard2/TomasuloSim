@@ -30,7 +30,7 @@ public class ReorderBuffer {
   public void squashFromTag(int tag)
   {
     int rear = rearQ;
-      if(frontQ > rearQ)
+      if(frontQ > rearQ && tag > rearQ)
       {
         rear = rearQ + 30;
       }
@@ -47,8 +47,6 @@ public class ReorderBuffer {
       simulator.cdb.squashTag(i % 30);
     }
     rearQ = tag;
-    if (rearQ < frontQ)
-      frontQ = tag;
   }
 
   public ROBEntry getEntryByTag(int tag) {
