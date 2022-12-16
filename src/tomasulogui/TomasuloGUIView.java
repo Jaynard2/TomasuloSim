@@ -106,7 +106,7 @@ public class TomasuloGUIView extends FrameView {
         }
         Memory4000.setCaretPosition(0);
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 30; i++) {
             String out = Integer.toString(5000 + 4 * i) + ":  " +
                     Integer.toString(simulator.getMemory().getIntDataAtAddr(5000 + 4 * i)) + "\n";
             Memory5000.append(out);
