@@ -96,12 +96,6 @@ public class IssueUnit {
           }
           else if(code == Instruction.INST_SW)
           {
-            issuee.regSrc1Tag = simulator.regs.getSlotForReg(issuee.getRegSrc1());
-            issuee.regSrc2Tag = simulator.regs.getSlotForReg(issuee.getRegSrc2());
-            if(issuee.regSrc1Tag == -1)
-              issuee.regSrc1Value = simulator.regs.getReg(issuee.getRegSrc1());
-            if(issuee.regSrc2Tag == -1)
-              issuee.regSrc2Value = simulator.regs.getReg(issuee.getRegSrc2());
             simulator.getPCStage().incrPC();
             simulator.getROB().updateInstForIssue(issuee);
           }

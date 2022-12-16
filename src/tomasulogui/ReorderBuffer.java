@@ -47,7 +47,7 @@ public class ReorderBuffer {
       simulator.cdb.squashTag(i % 30);
     }
     rearQ = tag;
-    if (tag == 0 && frontQ == 29)
+    if (rearQ < frontQ)
       frontQ = tag;
   }
 
